@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:VBox 
+	xmlns:mx="http://www.adobe.com/2006/mxml" 
+	width="100%" height="{panelHeight}" 
+	creationComplete="init();" 
+	backgroundColor="#AAAAAA" 
+	backgroundAlpha="0.5" 
+	x="0"
+	bottom="0"
+	implements="ua.com.syo.core.log.targets.ILogTarget"
+	mouseEnabled="false">
+	<mx:Script>
+		<![CDATA[
+			import ua.com.syo.core.log.Logger;
+			public var maxLogLength:int=400;
+			[Bindable]
+			public var panelHeight:int=150;
+			
+			public var autoShow:Boolean = false;
+
+			private var logCounter:int=0;
+			private var startTick:Number;
+			private var numFrames:Number=0;
+			private var isCollapse:Boolean=false;
+
+			private function init():void {
+				Logger.setTarget(this);
+				initFPS();
+				
+				if (!autoShow) {
+					height=20;
+					logOutputTA.includeInLayout=false;
+					logOutputTA.visible=false;
+					clearButton.visible = false;
+					isCollapse = false;
+				}
+			}
+
+			/**
+			 * init FPS counter
+			 */
+			private function initFPS():void {
+				addEventListener(Event.ENTER_FRAME, onTick);
+
+				startTick=getTimer();
+				var t:Timer=new Timer(1000);
+				t.addEventListener(TimerEvent.TIMER, timerHandler);
+				t.start();
+				timerHandler(null);
+			}
+
+			private function timerHandler(event:TimerEvent):void {
+				fpsLabel.text="FPS:" + numFrames;
+				memoryLabel.text="MEM:" + (Math.round(((System.totalMemory / 1024) / 1024) * 10)) / 10 + " MB";
+				numFrames=0;
+			}
+
+			/**
+			 * show FPS and Memory usage
+			 */
+			public function onTick(event:Event):void {
+				numFrames++;
+			}
+
+			public function append(txt:String):void {
+				if (++logCounter > maxLogLength){
+					logOutputTA.htmlText = "";
+					logCounter = 0;
+				}
+				logOutputTA.htmlText+=txt + "\n";
+				logOutputTA.verticalScrollPosition = logOutputTA.maxVerticalScrollPosition;
+			}
+
+			private function ceButtonClickHandler(event:MouseEvent):void {
+				if (isCollapse)	{
+					logOutputTA.includeInLayout=true;
+					height=panelHeight;
+					logOutputTA.visible=true;
+					clearButton.visible = true;
+				} else {
+					height=20;
+					logOutputTA.includeInLayout=false;
+					logOutputTA.visible=false;
+					clearButton.visible = false;
+				}
+				isCollapse=!isCollapse;
+			}
+		]]>
+	</mx:Script>
+	<mx:VBox id="vBoxContainer" width="100%" height="100%" verticalGap="0">
+		<mx:HBox width="100%" horizontalGap="0" borderColor="#E8E8E8" backgroundColor="#FFFFFF" backgroundAlpha="0.4" >
+			<mx:Label id="fpsLabel" width="60" fontFamily="Courier New" fontSize="11" click="ceButtonClickHandler(event)" />
+			<mx:Label id="memoryLabel" width="100" fontFamily="Courier New" fontSize="11" click="ceButtonClickHandler(event)"/>
+			<mx:Spacer width="100%"/>
+			<mx:Button id="clearButton" label="Clear" click="logOutputTA.htmlText = ''" height="20" fillAlphas="[0.0, 0.0, 0.0, 0.0]" fontFamily="Courier New" fontSize="11" fontWeight="normal" cornerRadius="0" alpha="0.0" width="79"/>
+			<!--<mx:Button id="removeButton" label="Remove" click="Application.application.removeLogPanel();" height="20" fillAlphas="[0.0, 0.0, 0.0, 0.0]" fontFamily="Courier New" fontSize="11" fontWeight="normal" cornerRadius="0" alpha="0.0" width="79"/>-->
+		</mx:HBox>
+		<mx:TextArea id="logOutputTA"  width="100%" height="100%" liveScrolling="true" fontFamily="Courier New" fontSize="11" backgroundColor="#eeeeee"/>
+	</mx:VBox>
+</mx:VBox>
