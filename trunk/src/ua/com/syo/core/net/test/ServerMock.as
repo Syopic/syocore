@@ -26,7 +26,7 @@ package ua.com.syo.core.net.test {
 			}
 		}
 		
-		public function getRequest(command:String):void {
+		public function getRequest(command:Object):void {
 		}
 		
 		public function sendResponse(str:String): void {
