@@ -10,6 +10,8 @@ package ua.com.syo.core.net.connections {
 	import flash.events.TimerEvent;
 	import flash.utils.Timer;
 	
+	import org.osmf.composition.SerialElement;
+	
 	import ua.com.syo.core.config.Config;
 	import ua.com.syo.core.log.Logger;
 	import ua.com.syo.core.net.ServerProxy;
@@ -19,7 +21,7 @@ package ua.com.syo.core.net.connections {
 	public class ServerMockConnection extends Connection {
 		
 		// for offLine mode
-		public var serverMock:ServerMock;
+		private var serverMock:ServerMock;
 
 		private var sendCommandStack:Array;
 		private var receiveCommandStack:Array;
@@ -27,8 +29,9 @@ package ua.com.syo.core.net.connections {
 		/**
 		 * Constructor
 		 */
-		public function ServerMockConnection(id:String, ca:ConnectionAttributes) {
+		public function ServerMockConnection(id:String, ca:ConnectionAttributes, serverMock:ServerMock) {
 			super(id, ca);
+			this.serverMock = serverMock;
 			sendCommandStack = new Array();
 			receiveCommandStack = new Array();
 		}
@@ -37,7 +40,6 @@ package ua.com.syo.core.net.connections {
 		 * Connect to mock server
 		 */
 		override public function init():void {
-			//serverMock = new ServerMock();
 			
 			serverMock.addEventListener(CommunicateEvent.DATA_RECEIVED, dataReceivedHandler);
 			
@@ -89,7 +91,7 @@ package ua.com.syo.core.net.connections {
 		 * @param command command string
 		 */
 		public function send(command:Object):void {
-			serverMock.getRequest(command.toString());
+			serverMock.getRequest(command);
 		}
 	}
 }
