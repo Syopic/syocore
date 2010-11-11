@@ -4,11 +4,12 @@
  * @link    			http://www.syo.com.ua/
  * @link    			mailto: syopic@gmail.com
  */
- package ua.com.syo.core.components.gui.alert {
+package ua.com.syo.core.components.gui.alert {
 	import flash.display.MovieClip;
 	import flash.display.Sprite;
 	import flash.events.Event;
 	import flash.events.MouseEvent;
+	import flash.filters.DropShadowFilter;
 	import flash.net.URLRequest;
 	import flash.net.navigateToURL;
 	import flash.text.TextField;
@@ -16,7 +17,7 @@
 	import flash.text.TextFieldType;
 	import flash.text.TextFormat;
 	import flash.text.TextFormatAlign;
-	
+
 	public class Alert extends Sprite {
 
 		private var titleText:String;
@@ -32,7 +33,7 @@
 		private var titleLabel:TextField;
 		private var messageLabel:TextField;
 		private var inputTF:TextField;
-		
+
 		private var callParam:*;
 
 
@@ -50,17 +51,20 @@
 			alertMc = new MovieClip();
 			alertBg.width = 300;
 			alertBg.height = 100;
-			
+
 			if (isModal) {
 				container.addChild(getModalMc());
 			}
-			
+
 			alertMc.addChild(alertBg);
 			container.addChild(alertMc);
 
+			var filter:DropShadowFilter = new DropShadowFilter(3, 45, 0x000000, 1, 6, 6, 0.5);
+			alertBg.filters = [filter];
+
 			titleLabel = new TextField();
 			messageLabel = new TextField();
-			
+
 			if (control == "textField") {
 				inputTF = new TextField();
 				buildInput();
@@ -69,11 +73,11 @@
 			buildButtons();
 			buildTitle();
 			buildMessage();
-			
+
 			resize(alertBg.width, alertBg.height);
-			
-			
-			for(var i:int = 0; i < buttonsArray.length; i++) {
+
+
+			for (var i:int = 0; i < buttonsArray.length; i++) {
 				var ab:AButton = buttonsArray[i];
 				ab.y = alertBg.height - 45;
 			}
@@ -124,7 +128,7 @@
 			messageLabel.x = 10;
 			messageLabel.y = 55;
 			messageLabel.text = messageText;
-			
+
 			alertBg.height = messageLabel.height + 60
 			if (control == "textField") {
 				alertBg.height += 100;
@@ -135,7 +139,7 @@
 			}
 			alertMc.addChild(messageLabel);
 		}
-		
+
 		/**
 		 * buildInput
 		 */
@@ -146,7 +150,7 @@
 			format.size = 10;
 			format.color = 0x000000;
 			format.bold = true;
-			
+
 			inputTF.type = TextFieldType.INPUT;
 			inputTF.border = true;
 			inputTF.multiline = true;
@@ -162,7 +166,7 @@
 		private function buildButtons():void {
 			var buttonsBlockW:int = 0;
 
-			for(var w:int = 0; w < buttonsArray.length; w++) {
+			for (var w:int = 0; w < buttonsArray.length; w++) {
 				buttonsBlockW += ((buttonsArray[w] as AButton).width + 14);
 			}
 			buttonsBlockW -= 10;
@@ -171,7 +175,7 @@
 
 			var dx:int = 0;
 
-			for(var i:int = 0; i < buttonsArray.length; i++) {
+			for (var i:int = 0; i < buttonsArray.length; i++) {
 				var ab:AButton = buttonsArray[i];
 				ab.y = alertBg.height - 45;
 				ab.x = dx + alertBg.width / 2 - buttonsBlockW / 2;
@@ -182,7 +186,7 @@
 		}
 
 		private function pressButtonHandler(event:MouseEvent):void {
-			
+
 			var ab:AButton = (event.currentTarget as AButton);
 
 			if (ab.commandType == "cancel") {
@@ -208,14 +212,16 @@
 		public function centerAlert(w:int, h:int):void {
 			alertMc.x = Math.round(w / 2 - alertBg.width / 2);
 			alertMc.y = Math.round(h / 2 - alertBg.height / 2);
+			modalMc.width = AlertManager.stageW;
+			modalMc.height = AlertManager.stageH;
 		}
 
 		private function getModalMc():MovieClip {
 
 			if (!modalMc) {
 				modalMc = new MovieClip();
-				modalMc.graphics.beginFill(0x000000, 0);
-				modalMc.graphics.drawRect(0, 0, container.width, container.height);
+				modalMc.graphics.beginFill(0x000000, 0.3);
+				modalMc.graphics.drawRect(0, 0, AlertManager.stageW, AlertManager.stageH);
 			}
 
 			modalMc.visible = true;
@@ -241,13 +247,13 @@
 			alertBg.height = h;
 			messageLabel.x = 10;
 			messageLabel.width = messageLabel.width;
-			
+
 			if (inputTF) {
 				inputTF.width = alertBg.width - 30;
 				inputTF.y = messageLabel.y + messageLabel.height + 5;
 				inputTF.x = 15;
 			}
-			
+
 			titleLabel.x = 10;
 			titleLabel.width = titleLabel.width;
 		}
