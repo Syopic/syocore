@@ -212,8 +212,10 @@ package ua.com.syo.core.components.gui.alert {
 		public function centerAlert(w:int, h:int):void {
 			alertMc.x = Math.round(w / 2 - alertBg.width / 2);
 			alertMc.y = Math.round(h / 2 - alertBg.height / 2);
-			modalMc.width = AlertManager.stageW;
-			modalMc.height = AlertManager.stageH;
+			if (modalMc) {
+				modalMc.width = AlertManager.stageW;
+				modalMc.height = AlertManager.stageH;
+			}
 		}
 
 		private function getModalMc():MovieClip {

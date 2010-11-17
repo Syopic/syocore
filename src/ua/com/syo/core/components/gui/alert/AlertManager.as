@@ -51,6 +51,11 @@ package ua.com.syo.core.components.gui.alert {
 				a = null;
 			}
 		}
+		
+		public static function removeAll():void {
+			//TODO
+			
+		}
 
 		public static function centerAlerts():void {
 			if (alertDict["1"]) {

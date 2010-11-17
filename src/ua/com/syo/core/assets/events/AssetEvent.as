@@ -22,5 +22,6 @@ package ua.com.syo.core.assets.events {
 		}
 
 		public var asset:Asset;
+		public var loaderLabel:String;
 	}
 }
