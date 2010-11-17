@@ -9,7 +9,7 @@ package ua.com.syo.core.assets {
 	
 	import ua.com.syo.core.assets.events.AssetEvent;
 	import ua.com.syo.core.log.Logger;
-	
+
 	public class AssetsLoader extends EventDispatcher {
 
 		private var assetsArray:Array = new Array();
@@ -17,7 +17,7 @@ package ua.com.syo.core.assets {
 		public var packageLabel:String;
 
 		/**
-		 * constructor 
+		 * constructor
 		 */
 		public function AssetsLoader(pLabel:String = "defaultName") {
 			packageLabel = pLabel;
@@ -25,26 +25,26 @@ package ua.com.syo.core.assets {
 
 		/**
 		 * add new asset in array
-		 * @param asset 
+		 * @param asset
 		 */
 		public function pushAsset(asset:Asset):void {
 			assetsArray.push(asset);
 		}
 
 		/**
-		 * start loading 
+		 * start loading
 		 */
 		public function startLoading():void {
 			assetsCounter = assetsArray.length;
 			if (assetsCounter == 0) {
-				dispatchEvent( new AssetEvent(AssetEvent.ALL_ASSETS_LOADED, true));
+				dispatchEvent(new AssetEvent(AssetEvent.ALL_ASSETS_LOADED, true));
 			}
 			for (var i:Number = 0; i < assetsCounter; i++) {
 				(assetsArray[i] as Asset).addEventListener(AssetEvent.ASSET_LOADED, oneAssetLoadedHandler);
 				(assetsArray[i] as Asset).load();
 			}
 		}
-		
+
 		private function oneAssetLoadedHandler(event:AssetEvent):void {
 			(event.target as Asset).removeEventListener(AssetEvent.ASSET_LOADED, oneAssetLoadedHandler);
 			AssetsStorage.addAsset(event.asset);
@@ -54,7 +54,9 @@ package ua.com.syo.core.assets {
 				if (packageLabel != "defaultName") {
 					Logger.DEBUG(" ---- Package assets: '" + packageLabel + "' loaded");
 				}
-				dispatchEvent( new AssetEvent(AssetEvent.ALL_ASSETS_LOADED, true));
+				var aEvent:AssetEvent = new AssetEvent(AssetEvent.ALL_ASSETS_LOADED, true);
+				aEvent.loaderLabel = packageLabel;
+				dispatchEvent(aEvent);
 			}
 		}
 	}
